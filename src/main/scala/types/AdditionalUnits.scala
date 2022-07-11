@@ -9,7 +9,7 @@ object AdditionalUnits:
   val atmosphere  : Pressure        = 101325 * pascal
   val bar         : Pressure        = 1e5 * pascal
   val centiPoise  : Pressure * Time = 1e-3 * pascal * second
-  val fluidOunce  : Volume          = 29.5735295625 * milli(liter)
+  val fluidOunce  : Volume          = 29.5735295625 * milli(litre)
   val foot        : Length          = 12 * inch
   val gram        : Mass            = 1e-3 * kilogram
   val hour        : Time            = 3600 * second
@@ -17,7 +17,8 @@ object AdditionalUnits:
   val kiloWattHour: Energy          = 3600000 * joule
   val liquidPint  : Volume          = 16 * fluidOunce
   val liquidQuart : Volume          = 2 * liquidPint
-  val liter       : Volume          = 1e-3 * metre ~ _3
+  val liter       : Volume          = 1 * litre
+  val litre       : Volume          = 1e-3 * metre ~ _3
   val meter       : Length          = 1 * meter
   val mile        : Length          = 1760 * yard
   val minute      : Time            = 60 * second

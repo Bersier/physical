@@ -12,7 +12,7 @@ object Example:
     val v2: Length / Time = 15 * metre / second
     println((v1 + v2).in(kilo(metre) / hour))
 
-    val waterDensity = 0.997 * kilogram / liter
+    val waterDensity = 0.997 * kilogram / litre
     val waterViscosity = 1 * centiPoise
 
     val lightYear: Length = 9460730472580800.0 * metre
