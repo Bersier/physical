@@ -24,8 +24,12 @@ object Dimensions:
         Dim[Op[lx, ly], Op[tx, ty], Op[px, py], Op[mx, my], Op[qx, qy], Op[cx, cy]]
 
   @targetName("times") type *[X, Y] = DimMap2[Sum, X, Y]
-  @targetName("over") type /[X, Y] = DimMap2[Dif, X, Y]
+  @targetName("over") type /[X, Y] = DimMap2[Diff, X, Y]
   @targetName("toThe") type ~[X, Y <: IntT] = DimMap[[Z <: IntT] =>> Prod[Z, Y], X]
+
+  // TODO: The following line would not compile, because IntQuotient is defined without type bound. Adding a type bound,
+  //  however, triggers this bug: https://github.com/lampepfl/dotty/issues/15816
+//  type Root[X, Y <: NonZero] = DimMap[[Z <: IntT] =>> IntQuotient[Z, Y], X]
 
   type Uno = Dim[_0, _0, _0, _0, _0, _0]
 
@@ -86,4 +90,8 @@ object Dimensions:
       Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Cy <: IntT
     ](y: Dim[Ly, Ty, Py, My, Qy, Cy]): Dim[L, T, P, M, Q, C] / Dim[Ly, Ty, Py, My, Qy, Cy] = x / y
     @targetName("toThe") inline def ~[E <: IntT](y: E): Dim[L, T, P, M, Q, C] ~ E = power(x, y)
+    // TODO: See TODO above commented out "Root" definition.
+//    inline def root[E <: NonZero](y: E)(using
+//     Divides[E, L], Divides[E, T], Divides[E, P], Divides[E, M], Divides[E, Q], Divides[E, C]
+//    ): Root[Dim[L, T, P, M, Q, C], E] = IntType.root(x, y)
 end Dimensions

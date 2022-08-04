@@ -19,6 +19,11 @@ object Example:
 
     println(lightYear.in(giga(kilo(metre))))
 
+    _9: NatSum[_2, _7]
+    _1: NatRemainder[_9, _4]
+    summon[NatDivides[_2, _2]]
+    summon[NatDivides[_3, _9]]
+
 //    val incorrect1 = v1 + lightYear
 //    val incorrect2: Time = 1 * metre
 end Example
