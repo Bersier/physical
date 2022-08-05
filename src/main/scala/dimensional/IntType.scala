@@ -1,4 +1,4 @@
-package types
+package dimensional
 
 object IntType:
   sealed trait IntT

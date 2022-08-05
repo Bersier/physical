@@ -1,8 +1,8 @@
-package types
+package dimensional
 
-import types.AdditionalUnits.*
-import types.Dimensions.{*, given}
-import types.IntType.*
+import dimensional.AdditionalUnits.*
+import dimensional.Dimensions.{*, given}
+import dimensional.IntType.*
 
 import scala.language.implicitConversions
 

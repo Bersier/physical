@@ -1,6 +1,6 @@
-package types
+package dimensional
 
-import types.IntType.*
+import dimensional.IntType.*
 
 import scala.annotation.targetName
 
