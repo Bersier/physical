@@ -2,11 +2,11 @@ package dimensional
 
 object IntType:
   sealed trait IntT
-  sealed trait NonZero extends IntT
+  sealed trait NonZeroIntT extends IntT
   sealed trait NatT extends IntT
   final case class Zero() extends NatT
-  final case class Succ[+N <: NatT](n: N) extends NatT with NonZero
-  final case class Minus[+N <: Succ[NatT]](n: N) extends NonZero
+  final case class Succ[+N <: NatT](n: N) extends NatT with NonZeroIntT
+  final case class Minus[+N <: Succ[NatT]](n: N) extends NonZeroIntT
 
   sealed trait BoolT
   final case class BotT() extends BoolT
@@ -59,7 +59,7 @@ object IntType:
 
   type NatRemainder[X <: NatT, Y <: Succ[NatT]] = Second[NatQuotient[X, Y]]
 
-  type IntQuotient[X <: IntT, Y <: NonZero] = (X, Y) match
+  type IntQuotient[X <: IntT, Y <: NonZeroIntT] = (X, Y) match
     case (_, `_1`) => (X, _0)
     case (Minus[x], Minus[y]) => NatQuotientFloor[x, y]
     case (_, Minus[y]) => Minus[NatQuotientFloor[X, y]]
@@ -144,4 +144,8 @@ object IntType:
   val _7: _7 = Succ(_6)
   val _8: _8 = Succ(_7)
   val _9: _9 = Succ(_8)
+
+  given Zero = _0
+  given [N <: NatT](using n: N): Succ[N] = Succ(n)
+  given [N <: Succ[NatT]](using n: N): Minus[N] = Minus(n)
 end IntType

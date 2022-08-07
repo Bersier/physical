@@ -5,6 +5,7 @@ import dimensional.Dimensions.{*, given}
 import dimensional.IntType.*
 
 import scala.language.implicitConversions
+import scala.util.NotGiven
 
 object Example:
   @main def main(): Unit =
@@ -19,10 +20,15 @@ object Example:
 
     println(lightYear.in(giga(kilo(metre))))
 
-    _9: NatSum[_2, _7]
-    _1: NatRemainder[_9, _4]
+    println(_9: NatSum[_2, _7])
+    println(_1: NatRemainder[_9, _4])
     summon[NatDivides[_2, _2]]
     summon[NatDivides[_3, _9]]
+    summon[NotGiven[NatDivides[_4, _9]]]
+
+    summon[Density =:= WithChargeSetTo[AbstractChargeDensity, Mass]]
+    summon[Density =:= WithPotentialSetTo[WithChargeSetTo[AbstractVolumetricCapacity, Momentum], Velocity]]
+    summon[ElectricCurrent =:= WithChargeSetTo[AbstractCurrent, ElectricCharge]]
 
 //    val incorrect1 = v1 + lightYear
 //    val incorrect2: Time = 1 * metre
