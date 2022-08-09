@@ -26,7 +26,6 @@ import scala.util.NotGiven
 
   println(litre.root(_3).asStringWith(centi(meter), "cm"))
 
-  // For legacy reasons, forcing the use of the Ampere as a unit
   println("A Coulomb is " + coulomb.asStringWith(ampere, "A"))
 
   summon[_9 =:= NatSum[_2, _7]]

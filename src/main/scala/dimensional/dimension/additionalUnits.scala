@@ -8,7 +8,7 @@ import scala.language.implicitConversions
 /*
  * Provides additional units.
  *
- * Note: because of an initialization bug/quirk/wart, the order of the following definitions matters.
+ * Note: because of a Scala initialization bug/quirk/wart, the order of the following definitions matters.
  * If a definition uses another, it should appear afterwards.
  */
 
