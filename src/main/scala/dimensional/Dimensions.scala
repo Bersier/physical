@@ -225,6 +225,8 @@ object Dimensions:
     inline def sec(): Uno = 1 / math.cos(x)
     inline def csc(): Uno = 1 / math.sin(x)
     inline def cot(): Uno = 1 / math.tan(x)
+    inline def normalized(): Angle = tau * fractionalPart(x / tau)
+//    @targetName("angleAsString") def toString(): String = s"$x radians"
   extension (x: Uno)
     inline def asin(): Angle = math.asin(x)
     inline def acos(): Angle = math.acos(x)
@@ -232,6 +234,10 @@ object Dimensions:
     inline def asec(): Angle = math.acos(1 / x)
     inline def acsc(): Angle = math.asin(1 / x)
     inline def acot(): Angle = math.atan(1 / x)
+//    @targetName("unoAsString") def toString(): String = s"$x (dimensionless)"
+
+  private inline val tau = 2 * math.Pi
+  private inline def fractionalPart(x: Double): Double = x - math.floor(x)
 
   extension[
     L <: IntT,
@@ -251,6 +257,26 @@ object Dimensions:
     S <: IntT,
     B <: IntT,
   ] (x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B])
+
+    def asString(using L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B): String =
+      x.toString + " " + dimensionsAsString(
+        summon[L],
+        summon[T],
+        summon[P],
+        summon[M],
+        summon[Q],
+        summon[N],
+        summon[C],
+        summon[A],
+        summon[AQ],
+        summon[AP],
+        summon[O1],
+        summon[O2],
+        summon[O3],
+        summon[O4],
+        summon[S],
+        summon[B]
+      )
 
     inline def in(units: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]): Double = x / units
 
@@ -353,4 +379,67 @@ object Dimensions:
 //      Divides[E, S],
 //      Divides[E, B],
 //    ): Root[Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B], E] = IntType.root(x, y)
+
+  def dimensionsAsString[
+    L2 <: IntT,
+    T2 <: IntT,
+    P2 <: IntT,
+    M2 <: IntT,
+    Q2 <: IntT,
+    N2 <: IntT,
+    C2 <: IntT,
+    A2 <: IntT,
+    AQ2 <: IntT,
+    AP2 <: IntT,
+    O12 <: IntT,
+    O22 <: IntT,
+    O32 <: IntT,
+    O42 <: IntT,
+    S2 <: IntT,
+    B2 <: IntT,
+  ](l: L2, t: T2, p: P2, m: M2, q: Q2, n: N2, c: C2, a: A2, aQ: AQ2, aP: AP2, o1: O12, o2: O22, o3: O32, o4: O42, s: S2, b: B2): String =
+    val unitStrings = IndexedSeq(
+      unitString(l, "m"),
+      unitString(t, "s"),
+      unitString(p, "K"),
+      unitString(m, "kg"),
+      unitString(q, "C"),
+      unitString(n, "mol"),
+      unitString(c, "$"),
+      unitString(a, "rad"),
+      unitString(aQ, "aQ"),
+      unitString(aP, "aP"),
+      unitString(o1, "o1"),
+      unitString(o2, "o2"),
+      unitString(o3, "o3"),
+      unitString(o4, "o4"),
+      unitString(s, "sr"),
+      unitString(b, "nat"),
+    )
+    unitStrings.filter(_.nonEmpty).mkString("·")
+
+  private def unitString(e: IntT, s: String): String =
+    val exponent = intTAsInt(e)
+    if exponent == 0 then "" else if exponent == 1 then s"$s" else s"$s${exponentString(exponent)}"
+
+  private def exponentString(e: Int): String =
+    assert(e != 0)
+    if e == 1 then "" else if e < 0 then s"⁻${intAsSuperscript(-e)}" else intAsSuperscript(e)
+
+  private def intAsSuperscript(i: Int): String =
+    assert(i >= 0)
+    if i == 0 then "" else intAsSuperscript(i / 10) + digitAsSuperscript(i % 10)
+
+  private def digitAsSuperscript(i: Int): String = i match
+    case 0 => "⁰"
+    case 1 => "¹"
+    case 2 => "²"
+    case 3 => "³"
+    case 4 => "⁴"
+    case 5 => "⁵"
+    case 6 => "⁶"
+    case 7 => "⁷"
+    case 8 => "⁸"
+    case 9 => "⁹"
+
 end Dimensions

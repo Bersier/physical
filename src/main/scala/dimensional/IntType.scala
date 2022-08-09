@@ -27,6 +27,17 @@ object IntType:
     case (`_0`, _) => Y
     case (Succ[x], Succ[y]) => Succ[Succ[NatSum[x, y]]]
 
+  //  def natSum[X <: NatT, Y <: NatT](x: X, y: Y): NatSum[X, Y] = y match
+  //    case _: `_0` => x
+  //    case Succ(y) => x match
+  //      case _: `_0` => y
+  //      case Succ(x) => Succ(Succ(natSum(x, y)))
+
+  def natSum(x: NatT, y: NatT): NatT = (x, y) match
+    case (_, Zero()) => x
+    case (Zero(), _) => y
+    case (Succ(x), Succ(y)) => Succ(Succ(natSum(x, y)))
+
   type First[P] = P match
     case (x, _) => x
 
@@ -110,6 +121,22 @@ object IntType:
   def natAsInt(x: NatT): Int = x match
     case _0() => 0
     case Succ(n) => 1 + natAsInt(n)
+
+  def intAsNat(x: Int): NatT =
+    assert(x >= 0)
+    if x == 0 then _0 else Succ(intAsNat(x - 1))
+
+  def positiveIntAsNat(x: Int): Succ[NatT] =
+    assert(x > 0)
+    Succ(intAsNat(x - 1))
+
+  def intTAsInt(x: IntT): Int = x match
+    case Minus(n) => -natAsInt(n)
+    case n: NatT => natAsInt(n)
+
+  def intAsIntT(x: Int): IntT = if x < 0 then Minus(positiveIntAsNat(-x)) else intAsNat(x)
+
+  def diff(x: IntT, y: IntT): IntT = intAsIntT(intTAsInt(x) - intTAsInt(y))
 
   def natPower(x: Double, y: NatT): Double = math.pow(x, natAsInt(y))
 
