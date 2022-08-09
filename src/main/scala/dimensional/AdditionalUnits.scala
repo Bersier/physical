@@ -9,7 +9,17 @@ import scala.language.implicitConversions
  * Provides additional units, as well as some metric and binary prefixes.
  */
 object AdditionalUnits:
+  /*
+   * Note: because of an initialization bug/quirk/wart, the order of the following definitions matters.
+   * If a definition uses another, it should appear afterwards.
+   */
+
   val degree: Angle = math.Pi / 180 * radian
+
+  val minute    : Time = 60 * second
+  val hour      : Time = 60 * minute
+  val day       : Time = 24 * hour
+  val julianYear: Time = 365.25 * day
 
   val electronVolt: Energy = 1.602176634e-19 * joule
   val smallCalorie: Energy = 4.184 * joule
@@ -21,6 +31,9 @@ object AdditionalUnits:
   val shannon: Information = math.log(2) * nat
   val bit    : Information = shannon
   val byte   : Information = 8 * bit
+
+  val kPH        : Velocity = kilo(metre) / hour
+  val planckSpeed: Velocity = 299792458 * metre / second
 
   val angstrom    : Length = 1e-10 * metre
   val meter       : Length = metre
@@ -43,14 +56,6 @@ object AdditionalUnits:
   val pSI       : Pressure = 6894.75729317 * pascal
 
   val centipoise: Pressure * Time = 1e-3 * pascal * second
-
-  val minute    : Time = 60 * second
-  val hour      : Time = 60 * minute
-  val day       : Time = 24 * hour
-  val julianYear: Time = 365.25 * day
-
-  val kPH        : Velocity = kilo(metre) / hour
-  val planckSpeed: Velocity = 299792458 * metre / second
 
   val litre      : Volume = 1e-3 * metre ~ _3
   val liter      : Volume = litre

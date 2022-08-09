@@ -106,7 +106,7 @@ object IntType:
     given[M <: NatT, N <: NatT] (using NatLessThan[M, N] =:= Top): NatIsLessThan[M, N]()
 
   /**
-   * Helper type for type-level Nat division with remainder
+   * Helper type for type-level NatT division with remainder
    *
    * @tparam M the dividend
    * @tparam N the divisor
@@ -118,7 +118,21 @@ object IntType:
     case Succ[diffPred] => NatQuotientHelper[Succ[diffPred], N, Succ[QAcc]]
 
   /**
-   * Type-level Nat division with remainder
+   * Helper type for type-level NatT division without remainder.
+   * 
+   * This is defined separately because of this bug: https://github.com/lampepfl/dotty/issues/15816
+   *
+   * @tparam M the dividend
+   * @tparam N the divisor
+   * @tparam QAcc the accumulator for the quotient
+   */
+  type NatQuotientFloorHelper[M <: NatT, N <: Succ[NatT], QAcc <: NatT] <: NatT = NatDiff[M, N] match
+    case Minus[_] => QAcc
+    case `_0` => Succ[QAcc]
+    case Succ[diffPred] => NatQuotientFloorHelper[Succ[diffPred], N, Succ[QAcc]]
+
+  /**
+   * Type-level NatT division with remainder
    *
    * @tparam M the dividend
    * @tparam N the divisor
@@ -128,7 +142,7 @@ object IntType:
     case _ => NatQuotientHelper[M, N, _0]
 
   /**
-   * Type-level rounded-down Nat division
+   * Type-level rounded-down NatT division
    *
    * @tparam M the dividend
    * @tparam N the divisor
@@ -136,24 +150,36 @@ object IntType:
   type NatQuotientFloor[M <: NatT, N <: Succ[NatT]] = First[NatQuotient[M, N]]
 
   /**
-   * Type-level Nat modulo operation
+   * Alternative type-level rounded-down NatT division
+   * 
+   * This is defined because of this bug: https://github.com/lampepfl/dotty/issues/15816
+   *
+   * @tparam M the dividend
+   * @tparam N the divisor
+   */
+  type NatQuotientFloor2[M <: NatT, N <: Succ[NatT]] <: NatT = M match
+    case _ => NatQuotientFloorHelper[M, N, _0]
+
+  /**
+   * Type-level NatT modulo operation
    */
   type NatRemainder[M <: NatT, N <: Succ[NatT]] = Second[NatQuotient[M, N]]
 
   /**
-   * Type-level Int division, rounded towards 0
+   * Type-level IntT division, rounded towards 0
+   * 
    * @tparam I the dividend
    * @tparam J the divisor
    */
-  type IntQuotient[I <: IntT, J <: NonZeroIntT] = (I, J) match
-    case (_, `_1`) => (I, _0)
-    case (Minus[absI], Minus[absJ]) => NatQuotientFloor[absI, absJ]
-    case (_, Minus[absJ]) => Minus[NatQuotientFloor[I, absJ]]
-    case (Minus[absI], _) => Minus[NatQuotientFloor[absI, J]]
-    case _ => NatQuotientFloor[I, J]
+  type IntQuotient[I <: IntT, J <: NonZeroIntT] <: IntT = (I, J) match
+    case (_, `_1`) => I
+    case (Minus[absI], Minus[absJ]) => NatQuotientFloor2[absI, absJ]
+    case (_, Minus[absJ]) => Neg[NatQuotientFloor2[I, absJ]]
+    case (Minus[absI], _) => Neg[NatQuotientFloor2[absI, J]]
+    case _ => NatQuotientFloor2[I, J]
 
   /**
-   * Type-level Int negation
+   * Type-level IntT negation
    */
   type Neg[I <: IntT] <: IntT = I match
     case _0 => _0

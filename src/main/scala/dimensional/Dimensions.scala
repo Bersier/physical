@@ -86,14 +86,12 @@ object Dimensions:
    */
   @targetName("toThe") type ~[D, P <: IntT] = DimMap[[Q <: IntT] =>> Prod[Q, P], D]
 
-  // TODO: The following line would not compile, because IntQuotient is defined without type bound. Adding a type bound,
-  //  however, triggers this bug: https://github.com/lampepfl/dotty/issues/15816
   /**
    * Returns the Nth root of the given dim.
    * @tparam D the given dim
    * @tparam N the root to take
    */
-//  type Root[D, N <: NonZeroIntT] = DimMap[[Z <: IntT] =>> IntQuotient[Z, N], D]
+  type Root[D, N <: NonZeroIntT] = DimMap[[Z <: IntT] =>> IntQuotient[Z, N], D]
 
   /**
    * Replaces abstract charge by AQ in D.
@@ -356,15 +354,14 @@ object Dimensions:
       Dim[Lp, Tp, Pp, Mp, Qp, Np, Cp, Ap, AQp, APp, O1p, O2p, O3p, O4p, Sp, Bp],
     ] = x * power(p, pPower)
 
-    // TODO: See TODO above commented out "Root" definition.
     /**
      * @return the nth root of this quantity
      */
-//    inline def root[E <: NonZeroIntT](n: E)(using
-//      Divides[E, L], Divides[E, T], Divides[E, P], Divides[E, M], Divides[E, Q], Divides[E, N], Divides[E, C],
-//      Divides[E, A], Divides[E, AQ], Divides[E, AP], Divides[E, O1], Divides[E, O2], Divides[E, O3], Divides[E, O4],
-//      Divides[E, S], Divides[E, B],
-//    ): Root[Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B], E] = IntType.root(x, n)
+    inline def root[E <: NonZeroIntT](n: E)(using
+      Divides[E, L], Divides[E, T], Divides[E, P], Divides[E, M], Divides[E, Q], Divides[E, N], Divides[E, C],
+      Divides[E, A], Divides[E, AQ], Divides[E, AP], Divides[E, O1], Divides[E, O2], Divides[E, O3], Divides[E, O4],
+      Divides[E, S], Divides[E, B],
+    ): Root[Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B], E] = IntType.root(x, n)
 
   /**
    * @return the given dimension exponents as a string

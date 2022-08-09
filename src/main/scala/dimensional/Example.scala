@@ -25,6 +25,8 @@ object Example:
     val myUnit = kilo(inch) * newton / hour
     println("A poise is " + (100 * centipoise).asStringWith(myUnit, "MU"))
 
+    println(litre.root(_3).asStringWith(centi(meter), "cm"))
+
     // For legacy reasons, forcing the use of the Ampere as a unit
     println("A Coulomb is " + coulomb.asStringWith(ampere, "A"))
 
@@ -41,4 +43,5 @@ object Example:
 
 //    val incorrect1 = v1 + lightYear
 //    val incorrect2: Time = 1 * metre
+//    println(litre.root(_2).asString)
 end Example
