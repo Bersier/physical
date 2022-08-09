@@ -376,29 +376,27 @@ object Dimensions:
     l: L2, t: T2, p: P2, m: M2, q: Q2, n: N2, c: C2, a: A2, aQ: AQ2, aP: AP2, o1: O12, o2: O22, o3: O32, o4: O42, s: S2,
     b: B2,
   ): String =
-    val unitStrings = Seq(
+    Seq(
       unitString(c, "$"), unitString(b, "nat"), unitString(l, "m"), unitString(m, "kg"), unitString(t, "s"),
       unitString(q, "C"), unitString(p, "K"), unitString(n, "mol"), unitString(a, "rad"), unitString(s, "sr"),
       unitString(aQ, "aQ"), unitString(aP, "aP"), unitString(o1, "o1"), unitString(o2, "o2"), unitString(o3, "o3"),
       unitString(o4, "o4"),
-    )
-    unitStrings.filter(_.nonEmpty).mkString("·")
+    ).filter((i, s) => i != 0).sortBy((i, s) => -i).map((i, s) => s).mkString("·")
 
   /**
    * @param e the exponent to which to raise the unit
    * @param s the unit symbol
-   * @return a string for the given unit symbol raised to the given power
+   * @return a string for the given unit symbol raised to the given power, preceded by the exponent, as an Int
    */
-  private def unitString(e: IntT, s: String): String =
+  private def unitString(e: IntT, s: String): (Int, String) =
     val exponent = intTAsInt(e)
-    if exponent == 0 then "" else s"$s${exponentString(exponent)}"
+    (exponent, s + exponentString(exponent))
 
   /**
-   * @return a string representation of the given non-zero exponent
+   * @return a string representation of the given exponent
    */
   private def exponentString(e: Int): String =
-    assert(e != 0)
-    if e == 1 then "" else if e < 0 then s"⁻${intAsSuperscript(-e)}" else intAsSuperscript(e)
+    if e == 1 then "" else if e < 0 then "⁻" + intAsSuperscript(-e) else intAsSuperscript(e)
 
   /**
    * @return a string of the given non-negative int as a superscript
