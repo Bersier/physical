@@ -1,87 +1,168 @@
 package dimensional
 
 object IntType:
+
+  /**
+   * Type-level Int type
+   */
   sealed trait IntT
+
+  /**
+   * Non-zero IntT type
+   */
   sealed trait NonZeroIntT extends IntT
+
+  /**
+   * Type-level Nat type
+   */
   sealed trait NatT extends IntT
+
+  /**
+   * Type-level 0 type (and term/value)
+   */
   final case class Zero() extends NatT
+
+  /**
+   * Type-level non-zero Nat type
+   * @param n the predecessor term/value
+   * @tparam N the predecessor type
+   */
   final case class Succ[+N <: NatT](n: N) extends NatT with NonZeroIntT
+
+  /**
+   * Type-level negative Int type
+   * @param n the absolute value term/value
+   * @tparam N the absolute value type
+   */
   final case class Minus[+N <: Succ[NatT]](n: N) extends NonZeroIntT
 
+  /**
+   * Type-level Boolean type
+   */
   sealed trait BoolT
-  final case class BotT() extends BoolT
-  final case class TopT() extends BoolT
 
-  given Conversion[Int, IntT] with
-    transparent inline def apply(i: Int): IntT =
-      if i < 0 then Minus(positive(-i))
-      else if i == 0 then Zero()
-      else positive(i)
+  /**
+   * Type-level "true" type
+   */
+  final case class Bot() extends BoolT
 
-    private[this] def positive(i: Int): Succ[NatT] = if i == 1
-      then Succ(Zero())
-      else Succ(positive(i - 1))
+  /**
+   * Type-level "false" type
+   */
+  final case class Top() extends BoolT
 
-  type NatSum[X <: NatT, Y <: NatT] <: NatT = (X, Y) match
-    case (_, `_0`) => X
-    case (`_0`, _) => Y
-    case (Succ[x], Succ[y]) => Succ[Succ[NatSum[x, y]]]
+  /**
+   * Type-level sum of two nats
+   */
+  type NatSum[M <: NatT, N <: NatT] <: NatT = (M, N) match
+    case (_, `_0`) => M
+    case (`_0`, _) => N
+    case (Succ[predM], Succ[predN]) => Succ[Succ[NatSum[predM, predN]]]
 
-  //  def natSum[X <: NatT, Y <: NatT](x: X, y: Y): NatSum[X, Y] = y match
-  //    case _: `_0` => x
-  //    case Succ(y) => x match
-  //      case _: `_0` => y
-  //      case Succ(x) => Succ(Succ(natSum(x, y)))
+  // TODO can the signature somehow be refined to "natSum[X <: NatT, Y <: NatT](x: X, y: Y): NatSum[X, Y]"?
+  /**
+   * Sum of two NatTs
+   */
+  def natSum(m: NatT, n: NatT): NatT = (m, n) match
+    case (_, Zero()) => m
+    case (Zero(), _) => n
+    case (Succ(predM), Succ(predN)) => Succ(Succ(natSum(predM, predN)))
 
-  def natSum(x: NatT, y: NatT): NatT = (x, y) match
-    case (_, Zero()) => x
-    case (Zero(), _) => y
-    case (Succ(x), Succ(y)) => Succ(Succ(natSum(x, y)))
-
-  type First[P] = P match
+  /**
+   * First projection of a pair type
+   */
+  type First[Pair] = Pair match
     case (x, _) => x
 
-  type Second[P] = P match
+  /**
+   * Second projection of a pair type
+   */
+  type Second[Pair] = Pair match
     case (_, y) => y
 
-  type NatDiff[X <: NatT, Y <: NatT] <: IntT = (X, Y) match
-    case (_, `_0`) => X
-    case (`_0`, _) => Minus[Y]
-    case (Succ[x], Succ[y]) => NatDiff[x, y]
+  /**
+   * Type-level difference between two nats
+   */
+  type NatDiff[M <: NatT, N <: NatT] <: IntT = (M, N) match
+    case (_, `_0`) => M
+    case (`_0`, _) => Minus[N]
+    case (Succ[predM], Succ[predN]) => NatDiff[predM, predN]
 
-  type NatLessThan[X <: NatT, Y <: NatT] = NatDiff[X, Y] match
-    case Minus[_] => TopT
-    case _ => BotT
+  /**
+   * Type level less-than comparison between two nats
+   */
+  type NatLessThan[M <: NatT, N <: NatT] = NatDiff[M, N] match
+    case Minus[_] => Top
+    case _ => Bot
 
-  trait NatIsLessThan[X <: NatT, Y <: NatT]
+  /**
+   * Type representing that one nat is less than another
+   *
+   * @tparam M the minuend
+   * @tparam N the subtrahend
+   */
+  trait NatIsLessThan[M <: NatT, N <: NatT]
   object NatIsLessThan:
-    given[X <: NatT, Y <: NatT](using NatLessThan[X, Y] =:= TopT): NatIsLessThan[X, Y]()
+    given[M <: NatT, N <: NatT] (using NatLessThan[M, N] =:= Top): NatIsLessThan[M, N]()
 
-  type NatQuotientHelper[X <: NatT, Y <: Succ[NatT], QAcc <: NatT] = NatDiff[X, Y] match
-    case Minus[_] => (QAcc, X)
+  /**
+   * Helper type for type-level Nat division with remainder
+   *
+   * @tparam M the dividend
+   * @tparam N the divisor
+   * @tparam QAcc the accumulator for the quotient
+   */
+  type NatQuotientHelper[M <: NatT, N <: Succ[NatT], QAcc <: NatT] = NatDiff[M, N] match
+    case Minus[_] => (QAcc, M)
     case `_0` => (Succ[QAcc], _0)
-    case Succ[x] => NatQuotientHelper[Succ[x], Y, Succ[QAcc]]
+    case Succ[diffPred] => NatQuotientHelper[Succ[diffPred], N, Succ[QAcc]]
 
-  type NatQuotient[X <: NatT, Y <: Succ[NatT]] = Y match
-    case `_1` => (X, _0)
-    case _ => NatQuotientHelper[X, Y, _0]
+  /**
+   * Type-level Nat division with remainder
+   *
+   * @tparam M the dividend
+   * @tparam N the divisor
+   */
+  type NatQuotient[M <: NatT, N <: Succ[NatT]] = N match
+    case `_1` => (M, _0)
+    case _ => NatQuotientHelper[M, N, _0]
 
-  type NatQuotientFloor[X <: NatT, Y <: Succ[NatT]] = First[NatQuotient[X, Y]]
+  /**
+   * Type-level rounded-down Nat division
+   *
+   * @tparam M the dividend
+   * @tparam N the divisor
+   */
+  type NatQuotientFloor[M <: NatT, N <: Succ[NatT]] = First[NatQuotient[M, N]]
 
-  type NatRemainder[X <: NatT, Y <: Succ[NatT]] = Second[NatQuotient[X, Y]]
+  /**
+   * Type-level Nat modulo operation
+   */
+  type NatRemainder[M <: NatT, N <: Succ[NatT]] = Second[NatQuotient[M, N]]
 
-  type IntQuotient[X <: IntT, Y <: NonZeroIntT] = (X, Y) match
-    case (_, `_1`) => (X, _0)
-    case (Minus[x], Minus[y]) => NatQuotientFloor[x, y]
-    case (_, Minus[y]) => Minus[NatQuotientFloor[X, y]]
-    case (Minus[x], _) => Minus[NatQuotientFloor[x, Y]]
-    case _ => NatQuotientFloor[X, Y]
+  /**
+   * Type-level Int division, rounded towards 0
+   * @tparam I the dividend
+   * @tparam J the divisor
+   */
+  type IntQuotient[I <: IntT, J <: NonZeroIntT] = (I, J) match
+    case (_, `_1`) => (I, _0)
+    case (Minus[absI], Minus[absJ]) => NatQuotientFloor[absI, absJ]
+    case (_, Minus[absJ]) => Minus[NatQuotientFloor[I, absJ]]
+    case (Minus[absI], _) => Minus[NatQuotientFloor[absI, J]]
+    case _ => NatQuotientFloor[I, J]
 
-  type Neg[X <: IntT] <: IntT = X match
+  /**
+   * Type-level Int negation
+   */
+  type Neg[I <: IntT] <: IntT = I match
     case _0 => _0
-    case Minus[x] => x
-    case _ => Minus[X]
+    case Minus[absI] => absI
+    case _ => Minus[I]
 
+  /**
+   * Type-level sum of two ints
+   */
   type Sum[X <: IntT, Y <: IntT] <: IntT = (X, Y) match
     case (_, `_0`) => X
     case (Minus[x], Minus[y]) => Minus[NatSum[x, y]]
@@ -89,67 +170,115 @@ object IntType:
     case (Minus[x], _) => NatDiff[Y, x]
     case _ => NatSum[X, Y]
 
-  type Diff[X <: IntT, Y <: IntT] = Sum[X, Neg[Y]]
+  /**
+   * Type-level difference between two ints
+   *
+   * @tparam I the minuend
+   * @tparam J the subtrahend
+   */
+  type Diff[I <: IntT, J <: IntT] = Sum[I, Neg[J]]
 
-  type NatProd[X <: NatT, Y <: NatT] <: NatT = (X, Y) match
+  /**
+   * Type-level product of two nats
+   */
+  type NatProd[M <: NatT, N <: NatT] <: NatT = (M, N) match
     case (_, `_0`) => _0
-    case (_, `_1`) => X
+    case (_, `_1`) => M
     case (`_0`, _) => _0
-    case (`_1`, _) => Y
-    case (Succ[x], Succ[y]) => NatSum[NatSum[_1, NatSum[x, y]], NatProd[x, y]]
+    case (`_1`, _) => N
+    case (Succ[predM], Succ[predN]) => NatSum[NatSum[_1, NatSum[predM, predN]], NatProd[predM, predN]]
 
-  type Prod[X <: IntT, Y <: IntT] <: IntT = (X, Y) match
+  /**
+   * Type-level product of two ints
+   */
+  type Prod[I <: IntT, J <: IntT] <: IntT = (I, J) match
     case (_, `_0`) => _0
-    case (_, `_1`) => X
-    case (Minus[x], Minus[y]) => NatProd[x, y]
-    case (_, Minus[y]) => Minus[NatProd[X, y]]
-    case (Minus[x], _) => Minus[NatProd[x, Y]]
-    case _ => NatProd[X, Y]
+    case (_, `_1`) => I
+    case (Minus[absI], Minus[absJ]) => NatProd[absI, absJ]
+    case (_, Minus[absJ]) => Minus[NatProd[I, absJ]]
+    case (Minus[absI], _) => Minus[NatProd[absI, J]]
+    case _ => NatProd[I, J]
 
-  trait NatDivides[X <: Succ[NatT], Y <: NatT]
+  /**
+   * Type representing that one nat divides another
+   *
+   * @tparam N the divisor
+   * @tparam M the dividend
+   */
+  trait NatDivides[N <: Succ[NatT], M <: NatT]
   object NatDivides:
-    given [X <: Succ[NatT]]: NatDivides[X, _0]()
-    given [X <: Succ[NatT], Y <: Succ[NatT]](using NatRemainder[Y, X] =:= _0): NatDivides[X, Y]()
+    given [N <: Succ[NatT]]: NatDivides[N, _0]()
+    given [N <: Succ[NatT], M <: Succ[NatT]] (using NatRemainder[M, N] =:= _0): NatDivides[N, M]()
 
-  trait Divides[X <: IntT, Y <: IntT]
+  /**
+   * Type representing that one int divides another
+   *
+   * @tparam J the divisor
+   * @tparam I the dividend
+   */
+  trait Divides[J <: IntT, I <: IntT]
   object Divides:
-    given [X <: Succ[NatT], Y <: NatT](using NatDivides[X, Y]): Divides[X, Y]()
-    given [X <: Succ[NatT], Y <: NatT](using NatDivides[X, Y]): Divides[Minus[X], Y]()
-    given [X <: Succ[NatT], Y <: Succ[NatT]](using NatDivides[X, Y]): Divides[X, Minus[Y]]()
-    given [X <: Succ[NatT], Y <: Succ[NatT]](using NatDivides[X, Y]): Divides[Minus[X], Minus[Y]]()
+    given [J <: Succ[NatT], I <: NatT] (using NatDivides[J, I]): Divides[J, I]()
+    given [J <: Succ[NatT], I <: NatT] (using NatDivides[J, I]): Divides[Minus[J], I]()
+    given [J <: Succ[NatT], I <: Succ[NatT]] (using NatDivides[J, I]): Divides[J, Minus[I]]()
+    given [J <: Succ[NatT], I <: Succ[NatT]] (using NatDivides[J, I]): Divides[Minus[J], Minus[I]]()
 
+  /**
+   * Converts a NatT to an Int.
+   */
   def natAsInt(x: NatT): Int = x match
     case _0() => 0
     case Succ(n) => 1 + natAsInt(n)
 
+  /**
+   * Converts a non-negative Int to a NatT.
+   */
   def intAsNat(x: Int): NatT =
     assert(x >= 0)
     if x == 0 then _0 else Succ(intAsNat(x - 1))
 
+  /**
+   * Converts a strictly positive Int to a non-zero NatT.
+   */
   def positiveIntAsNat(x: Int): Succ[NatT] =
     assert(x > 0)
     Succ(intAsNat(x - 1))
 
+  /**
+   * Converts an IntT to an Int.
+   */
   def intTAsInt(x: IntT): Int = x match
     case Minus(n) => -natAsInt(n)
     case n: NatT => natAsInt(n)
 
+  /**
+   * Converts an Int to an IntT.
+   */
   def intAsIntT(x: Int): IntT = if x < 0 then Minus(positiveIntAsNat(-x)) else intAsNat(x)
 
+  /**
+   * Difference between two IntTs
+   *
+   * @param x the minuend
+   * @param y the subtrahend
+   */
   def diff(x: IntT, y: IntT): IntT = intAsIntT(intTAsInt(x) - intTAsInt(y))
 
-  def natPower(x: Double, y: NatT): Double = math.pow(x, natAsInt(y))
+  /**
+   * @param x the base
+   * @param i the exponent
+   * @return the given Double raised to the given IntT
+   */
+  def power(x: Double, i: IntT): Double = math.pow(x, intTAsInt(i))
 
-  def power(x: Double, y: IntT): Double = y match
-    case Minus(n) => math.pow(natPower(x, n), -1)
-    case n: NatT => natPower(x, n)
+  /**
+   * @param x the root argument
+   * @param i the type of root to take
+   * @return the ith root of the given Double
+   */
+  def root(x: Double, i: NonZeroIntT): Double = math.pow(x, 1.0 / intTAsInt(i))
 
-  def natRoot(x: Double, y: NatT): Double = math.pow(x, 1.0 / natAsInt(y))
-
-  def root(x: Double, y: IntT): Double = y match
-    case Minus(n) => math.pow(natRoot(x, n), -1)
-    case n: NatT => natRoot(x, n)
-
+  // Type-level convenience aliases
   type _0 = Zero
   type _1 = Succ[_0]
   type _2 = Succ[_1]
@@ -161,6 +290,7 @@ object IntType:
   type _8 = Succ[_7]
   type _9 = Succ[_8]
 
+  // Term/value-level convenience aliases
   val _0: _0 = Zero()
   val _1: _1 = Succ(_0)
   val _2: _2 = Succ(_1)
@@ -172,6 +302,7 @@ object IntType:
   val _8: _8 = Succ(_7)
   val _9: _9 = Succ(_8)
 
+  // givens that allow summoning of an IntT value/term
   given Zero = _0
   given [N <: NatT](using n: N): Succ[N] = Succ(n)
   given [N <: Succ[NatT]](using n: N): Minus[N] = Minus(n)
