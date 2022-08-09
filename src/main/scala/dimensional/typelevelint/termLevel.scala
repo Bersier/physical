@@ -12,43 +12,43 @@ def natSum(m: NatT, n: NatT): NatT = (m, n) match
 /**
  * Converts a NatT to an Int.
  */
-def natAsInt(x: NatT): Int = x match
+def natAsInt(n: NatT): Int = n match
   case _0() => 0
   case Succ(n) => 1 + natAsInt(n)
 
 /**
  * Converts a non-negative Int to a NatT.
  */
-def intAsNat(x: Int): NatT =
-  assert(x >= 0)
-  if x == 0 then _0 else Succ(intAsNat(x - 1))
+def intAsNat(i: Int): NatT =
+  assert(i >= 0)
+  if i == 0 then _0 else Succ(intAsNat(i - 1))
 
 /**
  * Converts a strictly positive Int to a non-zero NatT.
  */
-def positiveIntAsNat(x: Int): Succ[NatT] =
-  assert(x > 0)
-  Succ(intAsNat(x - 1))
+def positiveIntAsNat(n: Int): Succ[NatT] =
+  assert(n > 0)
+  Succ(intAsNat(n - 1))
 
 /**
  * Converts an IntT to an Int.
  */
-def intTAsInt(x: IntT): Int = x match
+def intTAsInt(i: IntT): Int = i match
   case Minus(n) => -natAsInt(n)
   case n: NatT => natAsInt(n)
 
 /**
  * Converts an Int to an IntT.
  */
-def intAsIntT(x: Int): IntT = if x < 0 then Minus(positiveIntAsNat(-x)) else intAsNat(x)
+def intAsIntT(i: Int): IntT = if i < 0 then Minus(positiveIntAsNat(-i)) else intAsNat(i)
 
 /**
  * Difference between two IntTs
  *
- * @param x the minuend
- * @param y the subtrahend
+ * @param i the minuend
+ * @param j the subtrahend
  */
-def diff(x: IntT, y: IntT): IntT = intAsIntT(intTAsInt(x) - intTAsInt(y))
+def diff(i: IntT, j: IntT): IntT = intAsIntT(intTAsInt(i) - intTAsInt(j))
 
 /**
  * @param x the base

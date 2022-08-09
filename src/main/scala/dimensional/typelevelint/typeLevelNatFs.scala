@@ -4,13 +4,13 @@ package dimensional.typelevelint
  * First projection of a pair type
  */
 type First[Pair] = Pair match
-  case (x, _) => x
+  case (first, _) => first
 
 /**
  * Second projection of a pair type
  */
 type Second[Pair] = Pair match
-  case (_, y) => y
+  case (_, second) => second
 
 /**
  * Type-level sum of two nats

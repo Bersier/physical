@@ -24,12 +24,12 @@ type Neg[I <: IntT] <: IntT = I match
 /**
  * Type-level sum of two ints
  */
-type Sum[X <: IntT, Y <: IntT] <: IntT = (X, Y) match
-  case (_, `_0`) => X
-  case (Minus[x], Minus[y]) => Minus[NatSum[x, y]]
-  case (_, Minus[y]) => NatDiff[X, y]
-  case (Minus[x], _) => NatDiff[Y, x]
-  case _ => NatSum[X, Y]
+type Sum[I <: IntT, J <: IntT] <: IntT = (I, J) match
+  case (_, `_0`) => I
+  case (Minus[absI], Minus[absJ]) => Minus[NatSum[absI, absJ]]
+  case (_, Minus[absJ]) => NatDiff[I, absJ]
+  case (Minus[absI], _) => NatDiff[J, absI]
+  case _ => NatSum[I, J]
 
 /**
  * Type-level difference between two ints
