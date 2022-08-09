@@ -1,6 +1,7 @@
-package dimensional
+package dimensional.dimension
 
-import dimensional.IntType.{*, given}
+import dimensional.typelevelint
+import dimensional.typelevelint.{*, given}
 
 import scala.annotation.targetName
 
@@ -361,7 +362,7 @@ object Dimensions:
       Divides[E, L], Divides[E, T], Divides[E, P], Divides[E, M], Divides[E, Q], Divides[E, N], Divides[E, C],
       Divides[E, A], Divides[E, AQ], Divides[E, AP], Divides[E, O1], Divides[E, O2], Divides[E, O3], Divides[E, O4],
       Divides[E, S], Divides[E, B],
-    ): Root[Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B], E] = IntType.root(x, n)
+    ): Root[Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B], E] = typelevelint.root(x, n)
 
   /**
    * @return the given dimension exponents as a string
