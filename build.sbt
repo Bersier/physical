@@ -13,6 +13,7 @@ lazy val root = (project in file("."))
       "-Yexplicit-nulls",
       "-Ysafe-init",
       "-explain",
+      "-feature",
       "-language:strictEquality",
     ),
   )

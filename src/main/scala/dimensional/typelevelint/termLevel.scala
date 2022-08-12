@@ -1,13 +1,14 @@
 package dimensional.typelevelint
 
-// TODO can the signature somehow be refined to "natSum[X <: NatT, Y <: NatT](x: X, y: Y): NatSum[X, Y]"?
 /**
  * Sum of two NatTs
+ *
+ * Note: due to what seems to be a compiler bug, this definition causes a non-exhaustive-match warning to be issued.
  */
-def natSum(m: NatT, n: NatT): NatT = (m, n) match
-  case (_, Zero()) => m
-  case (Zero(), _) => n
-  case (Succ(predM), Succ(predN)) => Succ(Succ(natSum(predM, predN)))
+def natSum[M <: NatT, N <: NatT](m: M, n: N): NatSum[M, N] = (m, n) match
+  case (_, Zero()): (_, Zero) => m
+  case (Zero(), _): (Zero, _) => n
+  case (Succ(predM), Succ(predN)): (Succ[_], Succ[_]) => Succ(Succ(natSum(predM, predN)))
 
 /**
  * Converts a NatT to an Int.
