@@ -43,6 +43,8 @@ val mile        : Length = 8 * furlong
 val nauticalMile: Length = 1852 * metre
 val lightYear   : Length = planckSpeed * julianYear
 
+val knot: Velocity = nauticalMile / hour
+
 val gram     : Mass = milli(kilogram)
 val poundMass: Mass = 0.45359237 * kilogram
 val stone    : Mass = 14 * poundMass

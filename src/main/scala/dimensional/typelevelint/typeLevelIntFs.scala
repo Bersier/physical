@@ -45,6 +45,7 @@ type Diff[I <: IntT, J <: IntT] = Sum[I, Neg[J]]
 type Prod[I <: IntT, J <: IntT] <: IntT = (I, J) match
   case (_, `_0`) => _0
   case (_, `_1`) => I
+  case (`_0`, _) => _0
   case (Minus[absI], Minus[absJ]) => NatProd[absI, absJ]
   case (_, Minus[absJ]) => Minus[NatProd[I, absJ]]
   case (Minus[absI], _) => Minus[NatProd[absI, J]]

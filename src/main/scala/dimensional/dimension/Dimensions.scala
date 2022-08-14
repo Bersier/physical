@@ -159,14 +159,15 @@ object Dimensions:
   type AbstractCurrent = AbstractCharge / Time
   type AbstractResistivity = Uno / AbstractConductivity
   type AbstractVolumetricCapacity = AbstractCharge / AbstractPotential / Volume
-  type Acceleration = Length / Time ~ _2
+  type Acceleration = Velocity / Time
   type Area = Length ~ _2
   type Density = Mass / Volume
   type Diffusivity = Area / Time
   type ElectricCurrent = ElectricCharge / Time
   type ElectricPotential = Energy / ElectricCharge
-  type Energy = Mass * Area / Time ~ _2
-  type Force = Energy / Length
+  type ElectricResistance = ElectricPotential / ElectricCurrent
+  type Energy = Force * Length
+  type Force = Mass * Acceleration
   type Frequency = Uno / Time
   type Momentum = Mass * Velocity
   type Power = Energy / Time
@@ -176,29 +177,30 @@ object Dimensions:
   type Volume = Length ~ _3
 
   // Standard units (SI units for SI dimensions)
-  val ampere   : ElectricCurrent   = 1
-  val coulomb  : ElectricCharge    = 1
-  val dollar   : Cost              = 1
-  val hertz    : Frequency         = 1
-  val joule    : Energy            = 1
-  val kelvin   : Temperature       = 1
-  val kilogram : Mass              = 1
-  val metre    : Length            = 1
-  val mole     : SubstanceAmount   = 1
-  val nat      : Information       = 1
-  val newton   : Force             = 1
-  val o1Unit   : Other1            = 1
-  val o2Unit   : Other2            = 1
-  val o3Unit   : Other3            = 1
-  val o4Unit   : Other4            = 1
-  val pascal   : Pressure          = 1
-  val pUnit    : AbstractPotential = 1
-  val rUnit    : AbstractCharge    = 1
-  val radian   : Angle             = 1
-  val second   : Time              = 1
-  val steradian: SolidAngle        = 1
-  val volt     : ElectricPotential = 1
-  val watt     : Power             = 1
+  val ampere   : ElectricCurrent    = 1
+  val coulomb  : ElectricCharge     = 1
+  val dollar   : Cost               = 1
+  val hertz    : Frequency          = 1
+  val joule    : Energy             = 1
+  val kelvin   : Temperature        = 1
+  val kilogram : Mass               = 1
+  val metre    : Length             = 1
+  val mole     : SubstanceAmount    = 1
+  val nat      : Information        = 1
+  val newton   : Force              = 1
+  val o1Unit   : Other1             = 1
+  val o2Unit   : Other2             = 1
+  val o3Unit   : Other3             = 1
+  val o4Unit   : Other4             = 1
+  val ohm      : ElectricResistance = 1
+  val pascal   : Pressure           = 1
+  val pUnit    : AbstractPotential  = 1
+  val rUnit    : AbstractCharge     = 1
+  val radian   : Angle              = 1
+  val second   : Time               = 1
+  val steradian: SolidAngle         = 1
+  val volt     : ElectricPotential  = 1
+  val watt     : Power              = 1
 
   /**
    * Dimensionless quantities can be auto-converted to Doubles.
