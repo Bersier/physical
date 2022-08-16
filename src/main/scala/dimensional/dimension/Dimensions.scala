@@ -291,6 +291,41 @@ object Dimensions:
     inline def in(unit: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]): Double = x / unit
 
     /**
+     * Usual smaller-than comparison; only defined if the two quantities to be compared have the same dimension
+     */
+    @targetName("smallerThan") inline def <(
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+    ): Boolean = x < y
+
+    /**
+     * Usual larger-than comparison; only defined if the two quantities to be compared have the same dimension
+     */
+    @targetName("largerThan") inline def >(
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+    ): Boolean = x > y
+
+    /**
+     * Usual smaller-or-equal comparison; only defined if the two quantities to be compared have the same dimension
+     */
+    @targetName("smallerOrEqual") inline def <=(
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+    ): Boolean = x <= y
+
+    /**
+     * Usual larger-or-equal comparison; only defined if the two quantities to be compared have the same dimension
+     */
+    @targetName("largerOrEqual") inline def >=(
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+    ): Boolean = x >= y
+
+    /**
+     * Usual equality; only defined if the two quantities to be compared have the same dimension
+     */
+    @targetName("equal") inline def =:=(
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+    ): Boolean = x == y
+
+    /**
      * Usual addition; only defined if the two quantities to be added have the same dimension
      */
     @targetName("plus") inline def +(
@@ -298,11 +333,21 @@ object Dimensions:
     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = x + y
 
     /**
-     * Usual subtraction; only defined if the two quantities to be added have the same dimension
+     * Usual subtraction; only defined if the two quantities to be subtracted have the same dimension
      */
     @targetName("minus") inline def -(
       y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = x - y
+
+    /**
+     * Negation
+     */
+    inline def unary_- : Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = -x
+
+    /**
+     * Absolute value
+     */
+    inline def abs: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.abs(x)
 
     /**
      * Usual multiplication; dimensions are also multiplied
