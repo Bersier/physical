@@ -93,8 +93,8 @@ object Dimensions:
   @targetName("toThe") type ~[D, P <: IntT] = DimMap[[Q <: IntT] =>> Prod[Q, P], D]
 
   /**
-   * Returns the Nth root of the given dim.
-   * @tparam D the given dim
+   * Returns the Nth root of the given dim, assuming it's a valid operation.
+   * @tparam D the given dim, whose exponents should be divisible by N
    * @tparam N the root to take
    */
   type Root[D, N <: NonZeroIntT] = DimMap[[Z <: IntT] =>> IntQuotient[Z, N], D]
@@ -295,35 +295,45 @@ object Dimensions:
      */
     @targetName("smallerThan") inline def <(
       y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-    ): Boolean = x < y
+    ): Boolean =
+      assert(!(x.isNaN || y.isNaN))
+      x < y
 
     /**
      * Usual larger-than comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("largerThan") inline def >(
       y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-    ): Boolean = x > y
+    ): Boolean =
+      assert(!(x.isNaN || y.isNaN))
+      x > y
 
     /**
      * Usual smaller-or-equal comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("smallerOrEqual") inline def <=(
       y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-    ): Boolean = x <= y
+    ): Boolean =
+      assert(!(x.isNaN || y.isNaN))
+      x <= y
 
     /**
      * Usual larger-or-equal comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("largerOrEqual") inline def >=(
       y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-    ): Boolean = x >= y
+    ): Boolean =
+      assert(!(x.isNaN || y.isNaN))
+      x >= y
 
     /**
      * Usual equality; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("equal") inline def =:=(
       y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-    ): Boolean = x == y
+    ): Boolean =
+      assert(!(x.isNaN || y.isNaN))
+      x == y
 
     /**
      * Usual addition; only defined if the two quantities to be added have the same dimension

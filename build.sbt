@@ -6,6 +6,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "physical",
     scalacOptions ++= Seq(
+//      "-Xdisable-assertions",
       "-Ycheck-all-patmat",
       "-Ycheck-reentrant",
       "-Ycook-comments",

@@ -33,3 +33,4 @@ object Divides:
   given [J <: Succ[NatT], I <: NatT] (using NatDivides[J, I]): Divides[Minus[J], I]()
   given [J <: Succ[NatT], I <: Succ[NatT]] (using NatDivides[J, I]): Divides[J, Minus[I]]()
   given [J <: Succ[NatT], I <: Succ[NatT]] (using NatDivides[J, I]): Divides[Minus[J], Minus[I]]()
+  given [J <: NonZeroIntT, I <: IntT, K <: IntT] (using Divides[J, I]): Divides[J, Prod[K, I]]()
