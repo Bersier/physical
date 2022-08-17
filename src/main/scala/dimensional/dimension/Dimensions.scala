@@ -265,6 +265,26 @@ object Dimensions:
   ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.abs(x)
 
   /**
+   * Floor
+   */
+  inline def floor[
+    L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
+    O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
+  ](
+    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.floor(x)
+
+  /**
+   * Ceiling
+   */
+  inline def ceil[
+    L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
+    O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
+  ](
+    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.ceil(x)
+
+  /**
    * Functions that apply to any quantity, regardless of its dimension.
    */
   extension[
@@ -378,6 +398,16 @@ object Dimensions:
       y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By]
      ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] *
         Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By] = x * y
+
+    /**
+     * Usual % operator (Behaves like the Scala % operator on Doubles.)
+     */
+    @targetName("modulo") inline def %[
+      Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ny <: IntT, Cy <: IntT, Ay <: IntT, AQy <: IntT,
+      APy <: IntT, O1y <: IntT, O2y <: IntT, O3y <: IntT, O4y <: IntT, Sy <: IntT, By <: IntT,
+    ](
+      y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By]
+     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = x % y
 
     /**
      * Usual division; dimensions are also divided

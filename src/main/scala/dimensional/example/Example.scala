@@ -28,7 +28,7 @@ import scala.util.NotGiven
 
   println("A liter is smaller than a four inch cube: " + (litre < (4 * inch) ~ _3))
 
-  val angle = 100 * degree
+  val angle = 90 * degree
   println(s"The sine of ${angle.asStringWith(360 * degree, "turns")} is ${sin(angle)}")
 
   println("A Coulomb is " + coulomb.asStringWith(ampere, "A"))
