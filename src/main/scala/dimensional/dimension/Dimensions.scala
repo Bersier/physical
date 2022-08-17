@@ -221,12 +221,12 @@ object Dimensions:
     inline def apply(d: Uno): Double = d
 
   // Trigonometric functions
-  inline def sin(inline a: Angle): Uno = math.sin(a)
-  inline def cos(inline a: Angle): Uno = math.cos(a)
-  inline def tan(inline a: Angle): Uno = math.tan(a)
-  inline def sec(inline a: Angle): Uno = 1 / math.cos(a)
-  inline def csc(inline a: Angle): Uno = 1 / math.sin(a)
-  inline def cot(inline a: Angle): Uno = 1 / math.tan(a)
+  inline def sin(a: Angle): Uno = math.sin(a)
+  inline def cos(a: Angle): Uno = math.cos(a)
+  inline def tan(a: Angle): Uno = math.tan(a)
+  inline def sec(a: Angle): Uno = 1 / math.cos(a)
+  inline def csc(a: Angle): Uno = 1 / math.sin(a)
+  inline def cot(a: Angle): Uno = 1 / math.tan(a)
 
   extension (a: Angle)
     /**
@@ -235,24 +235,24 @@ object Dimensions:
     inline def normalized: Angle = (tau * fractionalPart(a / tau))
 
   // Inverse trigonometric functions
-  inline def asin(inline x: Uno): Angle = math.asin(x)
-  inline def acos(inline x: Uno): Angle = math.acos(x)
-  inline def atan(inline x: Uno): Angle = math.atan(x)
-  inline def asec(inline x: Uno): Angle = math.acos(1 / x)
-  inline def acsc(inline x: Uno): Angle = math.asin(1 / x)
-  inline def acot(inline x: Uno): Angle = math.atan(1 / x)
+  inline def asin(x: Uno): Angle = math.asin(x)
+  inline def acos(x: Uno): Angle = math.acos(x)
+  inline def atan(x: Uno): Angle = math.atan(x)
+  inline def asec(x: Uno): Angle = math.acos(1 / x)
+  inline def acsc(x: Uno): Angle = math.asin(1 / x)
+  inline def acot(x: Uno): Angle = math.atan(1 / x)
 
   /**
    * @param x the (effective) number of values in the discrete uniform distribution
    * @return the amount of entropy in a discrete uniform distribution with the given number of values
    */
-  inline def log(inline x: Uno): Information = math.log(x)
+  inline def log(x: Uno): Information = math.log(x)
 
   /**
    * @param x the entropy of the discrete uniform distribution
    * @return the (effective) number of values in a discrete uniform distribution with the given entropy
    */
-  inline def exp(inline x: Information): Uno = math.exp(x)
+  inline def exp(x: Information): Uno = math.exp(x)
 
   /**
    * Absolute value

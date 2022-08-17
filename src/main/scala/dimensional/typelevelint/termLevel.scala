@@ -70,7 +70,14 @@ def diff(i: IntT, j: IntT): IntT = intAsIntT(intTAsInt(i) - intTAsInt(j))
  * @param i the exponent
  * @return the given Double raised to the given IntT
  */
-inline def power(inline x: Double, inline i: IntT): Double = math.pow(x, inlineIntTAsInt(i))
+inline def power(inline x: Double, inline i: IntT): Double = intPower(x, inlineIntTAsInt(i))
+
+private def intPower(x: Double, e: Int): Double =
+  if e < 0 then nonNegativeIntPower(1.0 / x, -e, 1.0) else nonNegativeIntPower(x, e, 1.0)
+
+private def nonNegativeIntPower(x: Double, e: Int, acc: Double): Double =
+  val newAcc = acc * (if e % 2 == 0 then 1.0 else x)
+  if e <= 1 then newAcc else nonNegativeIntPower(x * x, e / 2, newAcc)
 
 /**
  * @param x the root argument

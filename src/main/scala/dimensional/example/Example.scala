@@ -26,6 +26,11 @@ import scala.util.NotGiven
 
   println(litre.root(_3).asStringWith(centi(meter), "cm"))
 
+  println("A liter is smaller than a four inch cube: " + (litre < (4 * inch) ~ _3))
+
+  val angle = 100 * degree
+  println(s"The sine of ${angle.asStringWith(360 * degree, "turns")} is ${sin(angle)}")
+
   println("A Coulomb is " + coulomb.asStringWith(ampere, "A"))
 
   summon[_9 =:= NatSum[_2, _7]]
