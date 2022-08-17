@@ -13,6 +13,13 @@ def natSum[M <: NatT, N <: NatT](m: M, n: N): NatSum[M, N] = (m, n) match
 /**
  * Converts a NatT to an Int.
  */
+inline def inlineNatAsInt(inline n: NatT): Int = inline n match
+  case _0() => 0
+  case Succ(n) => 1 + inlineNatAsInt(n)
+
+/**
+ * Converts a NatT to an Int.
+ */
 def natAsInt(n: NatT): Int = n match
   case _0() => 0
   case Succ(n) => 1 + natAsInt(n)
@@ -30,6 +37,13 @@ def intAsNat(i: Int): NatT =
 def positiveIntAsNat(n: Int): Succ[NatT] =
   assert(n > 0)
   Succ(intAsNat(n - 1))
+
+/**
+ * Converts an IntT to an Int.
+ */
+inline def inlineIntTAsInt(inline i: IntT): Int = inline i match
+  case Minus(n) => -inlineNatAsInt(n)
+  case n: NatT => inlineNatAsInt(n)
 
 /**
  * Converts an IntT to an Int.
@@ -56,14 +70,14 @@ def diff(i: IntT, j: IntT): IntT = intAsIntT(intTAsInt(i) - intTAsInt(j))
  * @param i the exponent
  * @return the given Double raised to the given IntT
  */
-def power(x: Double, i: IntT): Double = math.pow(x, intTAsInt(i))
+inline def power(inline x: Double, inline i: IntT): Double = math.pow(x, inlineIntTAsInt(i))
 
 /**
  * @param x the root argument
  * @param i the type of root to take
  * @return the ith root of the given Double
  */
-def root(x: Double, i: NonZeroIntT): Double = math.pow(x, 1.0 / intTAsInt(i))
+inline def root(inline x: Double, inline i: NonZeroIntT): Double = math.pow(x, 1.0 / inlineIntTAsInt(i))
 
 // Term/value-level convenience aliases
 val _0: _0 = Zero()
