@@ -220,35 +220,49 @@ object Dimensions:
   given Conversion[Uno, Double] with
     inline def apply(d: Uno): Double = d
 
-  /**
-   * Functions that only apply to quantities that are angles.
-   */
-  extension (x: Angle)
-    inline def sin(): Uno = math.sin(x)
-    inline def cos(): Uno = math.cos(x)
-    inline def tan(): Uno = math.tan(x)
-    inline def sec(): Uno = 1 / math.cos(x)
-    inline def csc(): Uno = 1 / math.sin(x)
-    inline def cot(): Uno = 1 / math.tan(x)
-    inline def normalized(): Angle = tau * fractionalPart(x / tau)
+  // Trigonometric functions
+  inline def sin(inline a: Angle): Uno = math.sin(a)
+  inline def cos(inline a: Angle): Uno = math.cos(a)
+  inline def tan(inline a: Angle): Uno = math.tan(a)
+  inline def sec(inline a: Angle): Uno = 1 / math.cos(a)
+  inline def csc(inline a: Angle): Uno = 1 / math.sin(a)
+  inline def cot(inline a: Angle): Uno = 1 / math.tan(a)
+
+  extension (a: Angle)
+    /**
+     * Normalizes this angle two be between 0 and 2 Pi.
+     */
+    inline def normalized: Angle = (tau * fractionalPart(a / tau))
+
+  // Inverse trigonometric functions
+  inline def asin(inline x: Uno): Angle = math.asin(x)
+  inline def acos(inline x: Uno): Angle = math.acos(x)
+  inline def atan(inline x: Uno): Angle = math.atan(x)
+  inline def asec(inline x: Uno): Angle = math.acos(1 / x)
+  inline def acsc(inline x: Uno): Angle = math.asin(1 / x)
+  inline def acot(inline x: Uno): Angle = math.atan(1 / x)
 
   /**
-   * Functions that only apply to quantities that are dimensionless.
+   * @param x the (effective) number of values in the discrete uniform distribution
+   * @return the amount of entropy in a discrete uniform distribution with the given number of values
    */
-  extension (x: Uno)
-    inline def asin(): Angle = math.asin(x)
-    inline def acos(): Angle = math.acos(x)
-    inline def atan(): Angle = math.atan(x)
-    inline def asec(): Angle = math.acos(1 / x)
-    inline def acsc(): Angle = math.asin(1 / x)
-    inline def acot(): Angle = math.atan(1 / x)
-    inline def log(): Information = math.log(x)
+  inline def log(inline x: Uno): Information = math.log(x)
 
   /**
-   * Functions that only apply to quantities that are information measures.
+   * @param x the entropy of the discrete uniform distribution
+   * @return the (effective) number of values in a discrete uniform distribution with the given entropy
    */
-  extension (x: Information)
-    inline def exp(): Uno = math.exp(x)
+  inline def exp(inline x: Information): Uno = math.exp(x)
+
+  /**
+   * Absolute value
+   */
+  inline def abs[
+    L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
+    O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
+  ](
+    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.abs(x)
 
   /**
    * Functions that apply to any quantity, regardless of its dimension.
@@ -353,11 +367,6 @@ object Dimensions:
      * Negation
      */
     inline def unary_- : Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = -x
-
-    /**
-     * Absolute value
-     */
-    inline def abs: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.abs(x)
 
     /**
      * Usual multiplication; dimensions are also multiplied
