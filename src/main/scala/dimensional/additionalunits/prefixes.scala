@@ -1,13 +1,9 @@
-package dimensional.dimension
+package dimensional.additionalunits
 
 import dimensional.dimension.Dimensions.{*, given}
 import dimensional.typelevelint.*
 
 import scala.language.implicitConversions
-
-/*
- * Provides some metric and binary prefixes.
- */
 
 inline def nano[
   L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,

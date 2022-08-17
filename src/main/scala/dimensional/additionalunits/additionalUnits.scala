@@ -1,4 +1,4 @@
-package dimensional.dimension
+package dimensional.additionalunits
 
 import dimensional.dimension.Dimensions.{*, given}
 import dimensional.typelevelint.*
@@ -6,8 +6,6 @@ import dimensional.typelevelint.*
 import scala.language.implicitConversions
 
 /*
- * Provides additional units.
- *
  * Note: because of a Scala initialization bug/quirk/wart, the order of the following definitions matters.
  * If a definition uses another, it should appear afterwards.
  */
