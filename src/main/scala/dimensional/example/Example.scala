@@ -27,6 +27,7 @@ import scala.util.NotGiven
 
   println(litre.root(_3).asStringWith(centi(meter), "cm"))
 
+  println("A liter is smaller than a three inch cube: " + (litre < (3 * inch) ~ _3))
   println("A liter is smaller than a four inch cube: " + (litre < (4 * inch) ~ _3))
 
   val angle = 90 * degree

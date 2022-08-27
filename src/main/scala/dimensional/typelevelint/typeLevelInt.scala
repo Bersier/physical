@@ -3,7 +3,7 @@ package dimensional.typelevelint
 /**
  * Type-level Int type
  */
-sealed trait IntT
+sealed trait IntT derives CanEqual
 
 /**
  * Non-zero IntT type

@@ -7,14 +7,17 @@ lazy val root = (project in file("."))
     name := "physical",
     scalacOptions ++= Seq(
 //      "-Xdisable-assertions",
+//      "-Xmax-inlines", "128",
       "-Ycheck-all-patmat",
       "-Ycheck-reentrant",
       "-Ycook-comments",
       "-Ydebug-pos",
       "-Yexplicit-nulls",
       "-Ysafe-init",
+      "-deprecation",
       "-explain",
       "-feature",
       "-language:strictEquality",
+      "-unchecked",
     ),
   )
