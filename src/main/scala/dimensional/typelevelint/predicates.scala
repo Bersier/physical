@@ -16,10 +16,10 @@ object NatIsLessThan:
  * @tparam N the divisor
  * @tparam M the dividend
  */
-trait NatDivides[N <: Succ[NatT], M <: NatT]
+trait NatDivides[N <: PositiveT, M <: NatT]
 object NatDivides:
-  given [N <: Succ[NatT]]: NatDivides[N, _0]()
-  given [N <: Succ[NatT], M <: Succ[NatT]] (using NatRemainder[M, N] =:= _0): NatDivides[N, M]()
+  given [N <: NatT]: NatDivides[Succ[N], _0]()
+  given [N <: NatT, M <: NatT] (using NatRemainder[Succ[M], Succ[N]] =:= _0): NatDivides[Succ[N], Succ[M]]()
 
 /**
  * Type representing that one int divides another
@@ -29,8 +29,8 @@ object NatDivides:
  */
 trait Divides[J <: IntT, I <: IntT]
 object Divides:
-  given [J <: Succ[NatT], I <: NatT] (using NatDivides[J, I]): Divides[J, I]()
-  given [J <: Succ[NatT], I <: NatT] (using NatDivides[J, I]): Divides[Minus[J], I]()
-  given [J <: Succ[NatT], I <: Succ[NatT]] (using NatDivides[J, I]): Divides[J, Minus[I]]()
-  given [J <: Succ[NatT], I <: Succ[NatT]] (using NatDivides[J, I]): Divides[Minus[J], Minus[I]]()
+  given [J <: NatT, I <: NatT] (using NatDivides[Succ[J], I]): Divides[Succ[J], I]()
+  given [J <: NatT, I <: NatT] (using NatDivides[Succ[J], I]): Divides[Minus[Succ[J]], I]()
+  given [J <: NatT, I <: NatT] (using NatDivides[Succ[J], Succ[I]]): Divides[Succ[J], Minus[Succ[I]]]()
+  given [J <: NatT, I <: NatT] (using NatDivides[Succ[J], Succ[I]]): Divides[Minus[Succ[J]], Minus[Succ[I]]]()
   given [J <: NonZeroIntT, I <: IntT, K <: IntT] (using Divides[J, I]): Divides[J, Prod[K, I]]()

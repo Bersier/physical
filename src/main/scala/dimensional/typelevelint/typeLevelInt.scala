@@ -16,6 +16,11 @@ sealed trait NonZeroIntT extends IntT
 sealed trait NatT extends IntT
 
 /**
+ * Strictly positive NatT type
+ */
+sealed trait PositiveT extends NatT, NonZeroIntT
+
+/**
  * Type-level 0 type (and term/value)
  */
 final case class Zero() extends NatT
@@ -25,14 +30,14 @@ final case class Zero() extends NatT
  * @param n the predecessor term/value
  * @tparam N the predecessor type
  */
-final case class Succ[+N <: NatT](n: N) extends NatT with NonZeroIntT
+final case class Succ[N <: NatT](n: N) extends NatT, PositiveT
 
 /**
  * Type-level negative Int type
  * @param n the absolute value term/value
  * @tparam N the absolute value type
  */
-final case class Minus[+N <: Succ[NatT]](n: N) extends NonZeroIntT
+final case class Minus[N <: PositiveT](n: N) extends NonZeroIntT
 
 /**
  * Type-level Boolean type

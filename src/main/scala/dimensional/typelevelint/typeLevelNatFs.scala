@@ -42,7 +42,7 @@ type NatLessThan[M <: NatT, N <: NatT] = NatDiff[M, N] match
  * @tparam N the divisor
  * @tparam QAcc the accumulator for the quotient
  */
-type NatQuotientHelper[M <: NatT, N <: Succ[NatT], QAcc <: NatT] = NatDiff[M, N] match
+type NatQuotientHelper[M <: NatT, N <: PositiveT, QAcc <: NatT] = NatDiff[M, N] match
   case Minus[_] => (QAcc, M)
   case `_0` => (Succ[QAcc], _0)
   case Succ[diffPred] => NatQuotientHelper[Succ[diffPred], N, Succ[QAcc]]
@@ -56,7 +56,7 @@ type NatQuotientHelper[M <: NatT, N <: Succ[NatT], QAcc <: NatT] = NatDiff[M, N]
  * @tparam N the divisor
  * @tparam QAcc the accumulator for the quotient
  */
-type NatQuotientFloorHelper[M <: NatT, N <: Succ[NatT], QAcc <: NatT] <: NatT = NatDiff[M, N] match
+type NatQuotientFloorHelper[M <: NatT, N <: PositiveT, QAcc <: NatT] <: NatT = NatDiff[M, N] match
   case Minus[_] => QAcc
   case `_0` => Succ[QAcc]
   case Succ[diffPred] => NatQuotientFloorHelper[Succ[diffPred], N, Succ[QAcc]]
@@ -67,7 +67,7 @@ type NatQuotientFloorHelper[M <: NatT, N <: Succ[NatT], QAcc <: NatT] <: NatT = 
  * @tparam M the dividend
  * @tparam N the divisor
  */
-type NatQuotient[M <: NatT, N <: Succ[NatT]] = N match
+type NatQuotient[M <: NatT, N <: PositiveT] = Succ[N] match
   case `_1` => (M, _0)
   case _ => NatQuotientHelper[M, N, _0]
 
@@ -77,7 +77,7 @@ type NatQuotient[M <: NatT, N <: Succ[NatT]] = N match
  * @tparam M the dividend
  * @tparam N the divisor
  */
-type NatQuotientFloor[M <: NatT, N <: Succ[NatT]] = First[NatQuotient[M, N]]
+type NatQuotientFloor[M <: NatT, N <: PositiveT] = First[NatQuotient[M, N]]
 
 /**
  * Alternative type-level rounded-down NatT division
@@ -87,13 +87,13 @@ type NatQuotientFloor[M <: NatT, N <: Succ[NatT]] = First[NatQuotient[M, N]]
  * @tparam M the dividend
  * @tparam N the divisor
  */
-type NatQuotientFloor2[M <: NatT, N <: Succ[NatT]] <: NatT = M match
+type NatQuotientFloor2[M <: NatT, N <: PositiveT] <: NatT = M match
   case _ => NatQuotientFloorHelper[M, N, _0]
 
 /**
  * Type-level NatT modulo operation
  */
-type NatRemainder[M <: NatT, N <: Succ[NatT]] = Second[NatQuotient[M, N]]
+type NatRemainder[M <: NatT, N <: PositiveT] = Second[NatQuotient[M, N]]
 
 /**
  * Type-level product of two nats

@@ -29,7 +29,7 @@ def intAsNat(i: Int): NatT =
 /**
  * Converts a strictly positive Int to a non-zero NatT.
  */
-def positiveIntAsNat(n: Int): Succ[NatT] =
+def positiveIntAsNat(n: Int): Succ[?] =
   assert(n > 0)
   Succ(intAsNat(n - 1))
 
@@ -63,12 +63,12 @@ def diff(i: IntT, j: IntT): IntT = intAsIntT(intTAsInt(i) - intTAsInt(j))
 /**
  * Inline
  *
+ * TODO ideally, power would call natPower2 (instead of natPower).
+ *      However, I can't get it to compile; Scala 3 seems too buggy at this time.
+ *
  * @param x the base
  * @param i the exponent
  * @return the given Double raised to the given IntT
- *
- * TODO ideally, power would call natPower2 (instead of natPower).
- *      However, I can't get it to compile; Scala 3 seems too buggy at this time.
  */
 inline def power(inline x: Double, inline i: IntT): Double = inline i match
   case Minus(n) => natPower(1.0 / x, n)
@@ -188,4 +188,4 @@ val _9: _9 = Succ(_8)
 // givens that allow summoning of an IntT value/term
 given Zero = _0
 given [N <: NatT](using n: N): Succ[N] = Succ(n)
-given [N <: Succ[NatT]](using n: N): Minus[N] = Minus(n)
+given [PredN <: NatT](using n: Succ[PredN]): Minus[Succ[PredN]] = Minus(n)
