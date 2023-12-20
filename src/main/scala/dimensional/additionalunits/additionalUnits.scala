@@ -5,11 +5,6 @@ import dimensional.typelevelint.*
 
 import scala.language.implicitConversions
 
-/*
- * Note: because of a Scala initialization bug/quirk/wart, the order of the following definitions matters.
- * If a definition uses another, it should appear afterwards.
- */
-
 val degree: Angle = math.Pi / 180 * radian
 
 val minute    : Time = 60 * second

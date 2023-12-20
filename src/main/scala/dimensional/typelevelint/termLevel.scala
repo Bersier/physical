@@ -3,7 +3,7 @@ package dimensional.typelevelint
 /**
  * Sum of two NatTs
  */
-def natSum[N <: NatT, M <: NatT](n: N, m: M)(using sum: NatSum[N, M]) : NatSum[N, M] = sum
+def natSum[N <: NatT, M <: NatT](n: N, m: M)(using sum: NatSum[N, M]): NatSum[N, M] = sum
 
 /**
  * Converts a NatT to an Int.
