@@ -1,67 +1,10 @@
 package dimensional.dimension
 
 import dimensional.typelevelint
-import dimensional.typelevelint.{*, given}
-import dimensional.dimension.Dimensions.Dim
+import dimensional.typelevelint.{Divides, IntT, NonZeroIntT, diff, power}
 
 import scala.annotation.targetName
 import scala.language.implicitConversions
-
-/**
- * Maps the given function over the components of the given dim.
- *
- * @tparam F the given type function
- * @tparam D the given dim
- */
-type DimMap[F[_ <: IntT] <: IntT, D] = D match
-  case Dim[l, t, p, m, q, n, c, a, aQ, aP, o1, o2, o3, o4, s, b] => Dim[
-    F[l], F[t], F[p], F[m], F[q], F[n], F[c], F[a], F[aQ], F[aP], F[o1], F[o2], F[o3], F[o4], F[s], F[b]
-  ]
-
-/**
- * Maps the given binary function over the components of the two given dims.
- *
- * @tparam F  the given binary type function
- * @tparam D1 the first given dim
- * @tparam D2 the second given dim
- */
-type DimMap2[Op[_ <: IntT, _ <: IntT] <: IntT, D1, D2] = D1 match
-  case Dim[l1, t1, p1, m1, q1, n1, c1, a1, aQ1, aP1, o11, o21, o31, o41, s1, b1] => D2 match
-    case Dim[l2, t2, p2, m2, q2, n2, c2, a2, aQ2, aP2, o12, o22, o32, o42, s2, b2] => Dim[
-      Op[l1, l2], Op[t1, t2], Op[p1, p2], Op[m1, m2], Op[q1, q2], Op[n1, n2], Op[c1, c2], Op[a1, a2], Op[aQ1, aQ2],
-      Op[aP1, aP2], Op[o11, o12], Op[o21, o22], Op[o31, o32], Op[o41, o42], Op[s1, s2], Op[b1, b2],
-    ]
-
-/**
- * Replaces abstract charge by AQ in D.
- *
- * @tparam D  the dim in which the abstract charge is to be replaced
- * @tparam AQ what to replace the abstract charge with
- */
-type WithChargeSetTo[D, AQ] = D match
-  case Dim[_, _, _, _, _, _, _, _, aQ1, _, _, _, _, _, _, _] => AQ match
-    case Dim[_, _, _, _, _, _, _, _, aQ2, _, _, _, _, _, _, _] => SetterHelper[D, AQ, aQ1] match
-      case Dim[l, t, p, m, q, n, c, a, _, aP, o1, o2, o3, o4, s, b] => Dim[
-        l, t, p, m, q, n, c, a, Prod[aQ1, aQ2], aP, o1, o2, o3, o4, s, b
-      ]
-
-/**
- * Replaces abstract potential by AP in D.
- *
- * @tparam D  the dim in which the abstract charge is to be replaced
- * @tparam AP what to replace the abstract charge with
- */
-type WithPotentialSetTo[D, AP] = D match
-  case Dim[_, _, _, _, _, _, _, _, _, aP1, _, _, _, _, _, _] => AP match
-    case Dim[_, _, _, _, _, _, _, _, _, aP2, _, _, _, _, _, _] => SetterHelper[D, AP, aP1] match
-      case Dim[l, t, p, m, q, n, c, a, aQ, _, o1, o2, o3, o4, s, b] => Dim[
-        l, t, p, m, q, n, c, a, aQ, Prod[aP1, aP2], o1, o2, o3, o4, s, b
-      ]
-
-/**
- * Helper for abstract dimension setters.
- */
-type SetterHelper[D, R, M <: IntT] = DimMap2[[I <: IntT, J <: IntT] =>> Sum[I, Prod[M, J]], D, R]
 
 /**
  * Where the main definitions are, in particular Dim for physical quantities.
@@ -107,76 +50,6 @@ object Dimensions:
     SolidAngle <: IntT,        // s
     Information <: IntT,       // b
   ] = Double
-
-  /**
-   * Multiplies the two given dims.
-   */
-  @targetName("times") type *[D1, D2] = DimMap2[Sum, D1, D2]
-
-  /**
-   * Divides the two given dims.
-   */
-  @targetName("over") type /[D1, D2] = DimMap2[Diff, D1, D2]
-
-  /**
-   * Raises the given dim to the given power.
-   * @tparam D the given dim
-   * @tparam P the given power
-   */
-  @targetName("toThe") type ~[D, P <: IntT] = DimMap[[Q <: IntT] =>> Prod[Q, P], D]
-
-  /**
-   * Returns the Nth root of the given dim, assuming it's a valid operation.
-   * @tparam D the given dim, whose exponents should be divisible by N
-   * @tparam N the root to take
-   */
-  type Root[D, N <: NonZeroIntT] = DimMap[[Z <: IntT] =>> IntQuotient[Z, N], D]
-
-  /**
-   * Trivial dimension to represent dimensionless quantities
-   */
-  type Uno = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-
-  // Base dimensions
-  type Length            = Dim[_1, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-  type Time              = Dim[_0, _1, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-  type Temperature       = Dim[_0, _0, _1, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-  type Mass              = Dim[_0, _0, _0, _1, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-  type ElectricCharge    = Dim[_0, _0, _0, _0, _1, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-  type SubstanceAmount   = Dim[_0, _0, _0, _0, _0, _1, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-  type Cost              = Dim[_0, _0, _0, _0, _0, _0, _1, _0, _0, _0, _0, _0, _0, _0, _0, _0]
-  type Angle             = Dim[_0, _0, _0, _0, _0, _0, _0, _1, _0, _0, _0, _0, _0, _0, _0, _0]
-  type AbstractCharge    = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _1, _0, _0, _0, _0, _0, _0, _0]
-  type AbstractPotential = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _1, _0, _0, _0, _0, _0, _0]
-  type Other1            = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _1, _0, _0, _0, _0, _0]
-  type Other2            = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _1, _0, _0, _0, _0]
-  type Other3            = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _1, _0, _0, _0]
-  type Other4            = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _1, _0, _0]
-  type SolidAngle        = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _1, _0]
-  type Information       = Dim[_0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _0, _1]
-
-  // Derived dimensions
-  type AbstractChargeDensity = AbstractCharge / Volume
-  type AbstractConductivity = AbstractCharge / AbstractPotential / Length / Time
-  type AbstractCurrent = AbstractCharge / Time
-  type AbstractResistivity = Uno / AbstractConductivity
-  type AbstractVolumetricCapacity = AbstractCharge / AbstractPotential / Volume
-  type Acceleration = Velocity / Time
-  type Area = Length ~ _2
-  type Density = Mass / Volume
-  type Diffusivity = Area / Time
-  type ElectricCurrent = ElectricCharge / Time
-  type ElectricPotential = Energy / ElectricCharge
-  type ElectricResistance = ElectricPotential / ElectricCurrent
-  type Energy = Force * Length
-  type Force = Mass * Acceleration
-  type Frequency = Uno / Time
-  type Momentum = Mass * Velocity
-  type Power = Energy / Time
-  type Pressure = Force / Area
-  type Velocity = Length / Time
-  type Viscosity = Pressure * Time
-  type Volume = Length ~ _3
 
   // Standard units (SI units for SI dimensions)
   val ampere   : ElectricCurrent    = 1

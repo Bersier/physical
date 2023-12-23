@@ -1,6 +1,6 @@
 package dimensional.dimension
 
-import dimensional.typelevelint.*
+import dimensional.typelevelint.{IntT, intTAsInt}
 
 private inline val tau = 2 * math.Pi
 

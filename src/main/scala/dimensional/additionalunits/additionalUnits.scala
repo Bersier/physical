@@ -1,5 +1,6 @@
 package dimensional.additionalunits
 
+import dimensional.dimension.*
 import dimensional.dimension.Dimensions.{*, given}
 import dimensional.typelevelint.*
 
