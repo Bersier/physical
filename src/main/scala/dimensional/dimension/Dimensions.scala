@@ -8,8 +8,6 @@ import scala.language.implicitConversions
 
 /**
  * Where the main definitions are, in particular Dim for physical quantities.
- *
- * Note: trying to break up the file leads to obscure errors from the compiler.
  */
 object Dimensions:
   /**
@@ -107,7 +105,7 @@ object Dimensions:
     /**
      * Normalizes this angle two be between 0 and 2 Pi.
      */
-    inline def normalized: Angle = (tau * fractionalPart(a / tau))
+    inline def normalized: Angle = (tau * fractionalPart((a: Double) / tau))
 
   // Inverse trigonometric functions
   inline def asin(x: Uno): Angle = math.asin(x)
